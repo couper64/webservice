@@ -16,7 +16,7 @@ Open a terminal with the installed Conda package manager and run the following c
 
 Open a terminal in the root folder of the project and run the following command.
 
-    fastapi dev main.py
+    fastapi dev app/main.py
 
 # Project Structure
 
