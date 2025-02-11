@@ -36,3 +36,9 @@ Knowing the internet, it will be updated and lost forever, so here is a copy of 
     │   └── internal
     │       ├── __init__.py
     │       └── admin.py
+
+# Roadmap
+
+Use `celery` with `redis` to create asynchronous task execution with task queueing. Integrate the idea of "*Returning Task ID and Checking Progress via Polling*" at, for example, the `/task-status/{task_id}` endpoint. Otherwise, experiment with the WebSocket connection.
+
+Store the results in a file server using `minio`. In case of textual information, store the results in a database using `postgresql`.
