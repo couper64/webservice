@@ -4,6 +4,8 @@ from fastapi import FastAPI
 from fastapi.responses import FileResponse
 from pydantic import BaseModel
 
+from pathlib import Path
+
 app = FastAPI()
 
 
@@ -31,4 +33,6 @@ async def root():
 # The reason is that favicon requests (/favicon.ico) are automatically sent by browsers, but they are not part of the API’s core functionality. Including it in the schema could clutter the auto-generated API documentation (e.g., Swagger UI), which should focus on actual API endpoints. By using include_in_schema=False, you keep the API docs clean while still serving the favicon when requested.
 @app.get('/favicon.ico', include_in_schema=False)
 async def favicon():
-    return FileResponse('favicon.ico')
+
+    # The / operator in Path objects is overloaded to work as a path concatenation operator in Python’s pathlib module.
+    return FileResponse(Path(__file__).parent / "favicon.ico")

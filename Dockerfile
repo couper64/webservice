@@ -2,7 +2,7 @@
 FROM python:3.11-slim AS builder
 
 # Set the working directory inside the container.
-WORKDIR /app
+WORKDIR /webservice
 
 # Assuming this file is right next to Dockerfile.
 COPY requirements.txt .
@@ -16,7 +16,7 @@ RUN pip install --no-cache-dir --prefix=/install -r requirements.txt
 FROM python:3.11-slim
 
 # Set the working directory inside the container.
-WORKDIR /app
+WORKDIR /webservice
 
 # Copy installed dependencies from the builder stage to the final image to keep it lightweight.
 COPY --from=builder /install /usr/local
