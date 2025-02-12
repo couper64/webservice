@@ -18,6 +18,20 @@ Open a terminal in the root folder of the project and run the following command.
 
     fastapi dev app/main.py
 
+# How to Run Dockerfile
+
+Open a terminal in the root folder of the project and run the following command to build the Docker image.
+
+    docker build -t webservice .
+
+The following command will run the container in "*detached*" mode with the same name as the Docker image whilst forwarding host's port 8000 to container's port 8000.
+
+    docker run -dit --name webservice --rm --publish 8000:8000 webservice
+
+To view the status of the container, this command will show the logs in real-time.
+
+    docker logs -f webservice
+
 # Project Structure
 
 Following the advices on the [official documentation](https://fastapi.tiangolo.com/tutorial/bigger-applications/), [GitHub](https://github.com/zhanymkanov/fastapi-best-practices?tab=readme-ov-file#project-structure), and [Medium](https://medium.com/@amirm.lavasani/how-to-structure-your-fastapi-projects-0219a6600a8f), this project is going to be adhere to a microservice architecture. Thus, the top folder that contains most of the logic will be named `app` as per the [official documentation](https://fastapi.tiangolo.com/tutorial/bigger-applications/).
