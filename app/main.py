@@ -6,6 +6,9 @@ from pydantic import BaseModel
 
 from pathlib import Path
 
+from celery.result import AsyncResult
+from app.task.sleep_task import sleep_task
+
 app = FastAPI()
 
 
@@ -36,3 +39,15 @@ async def favicon():
 
     # The / operator in Path objects is overloaded to work as a path concatenation operator in Python’s pathlib module.
     return FileResponse(Path(__file__).parent / "favicon.ico")
+
+
+@app.post("/task/sleep/")
+async def run_task(duration : float):
+    result : AsyncResult = sleep_task.delay(duration)
+    return {"task_id": result.id}
+
+
+@app.get("/task/{task_id}")
+async def get_task_status(task_id : str):
+    result : AsyncResult = AsyncResult(task_id)
+    return {"status": result.status, "result": result.result}
