@@ -18,19 +18,85 @@ Open a terminal in the root folder of the project and run the following command.
 
     fastapi dev app/main.py
 
+To run `celery`, the following command will launch it from a terminal, in Windows.
+
+> :warning: To run this command, install `eventlet`, e.g. `pip install eventlet`.
+
+    celery -A app.celery_worker worker --loglevel=info -P eventlet
+
+The rest could use a regular command.
+
+    celery -A app.celery_worker worker --loglevel=info
+
+To setup `redis`, on Windows, it requires WSL2, by default, it is Ubuntu. The following should be run with Administrator privileges from PowerShell.
+
+    wsl --update
+    wsl --install
+
+Inside Ubuntu, the following command should get us running.
+
+    curl -fsSL https://packages.redis.io/gpg | sudo gpg --dearmor -o /usr/share/keyrings/redis-archive-keyring.gpg
+
+    echo "deb [signed-by=/usr/share/keyrings/redis-archive-keyring.gpg] https://packages.redis.io/deb $(lsb_release -cs) main" | sudo tee /etc/apt/sources.list.d/redis.list
+
+    sudo apt-get update
+    sudo apt-get install redis
+
+    sudo service redis-server start
+
+Once Redis is running, you can test it by running redis-cli:
+
+    redis-cli
+
+Test the connection with the ping command:
+
+    127.0.0.1:6379> ping
+
+Expected output is `PONG`.
+
+# How to Test from Terminal
+
+From PowerShell, the following command will create a task.
+
+    clear ; Invoke-WebRequest -Uri "http://localhost:8000/task/sleep/?duration=60" `
+        -Method Post `
+        -Headers @{ "Content-Type" = "application/json" }
+
+From PowerShell, the following command will check the status of the task.
+
+    clear ; Invoke-WebRequest -Uri "http://localhost:8000/task/e58f6e2c-cbab-4f62-921a-b404bb45172b" `
+        -Method Get
+
+To check the status of `redis-server.service`, on Linux and WSL.
+
+    sudo systemctl status redis-server.service
+
 # How to Run Dockerfile
 
 Open a terminal in the root folder of the project and run the following command to build the Docker image.
 
-    docker build -t webservice .
+    docker build -t fastapi-app -f Dockerfile.fastapi .
+    docker build -t celery-app -f Dockerfile.celery .
+
+Create a single network for all of the containers involved in the project.
+
+    docker network create webservice
 
 The following command will run the container in "*detached*" mode with the same name as the Docker image whilst forwarding host's port 8000 to container's port 8000.
 
-    docker run -dit --name webservice --rm --publish 8000:8000 webservice
+    docker run -d --network webservice --name fastapi-app --rm --publish 8000:8000 fastapi-app
+    docker run -d --network webservice --name celery-app --rm celery-app
 
 To view the status of the container, this command will show the logs in real-time.
 
-    docker logs -f webservice
+    docker logs -f fastapi-app
+    docker logs -f celery-app
+
+# How to Run Redis
+
+From the terminal, run the following command.
+
+    docker run -d --network webservice --name redis --rm redis
 
 # Project Structure
 
@@ -56,3 +122,5 @@ Knowing the internet, it will be updated and lost forever, so here is a copy of 
 Use `celery` with `redis` to create asynchronous task execution with task queueing. Integrate the idea of "*Returning Task ID and Checking Progress via Polling*" at, for example, the `/task-status/{task_id}` endpoint. Otherwise, experiment with the WebSocket connection.
 
 Store the results in a file server using `minio`. In case of textual information, store the results in a database using `postgresql`.
+
+Configure a `docker-compose.yml` file to run the entire project with the dependencies at once.
