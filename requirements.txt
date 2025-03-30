@@ -1,3 +1,5 @@
 fastapi[standard]
 celery[redis]
 redis
+minio
+psycopg
