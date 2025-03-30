@@ -7,4 +7,4 @@ worker = Celery(
 )
 
 # Use autodiscover_tasks to load tasks automatically.
-worker.autodiscover_tasks(["app.task.sleep_task"])
+worker.autodiscover_tasks(["worker.task.sleep_task"])

@@ -6,16 +6,12 @@ from pydantic import BaseModel
 
 from pathlib import Path
 
-from celery import Celery
-from celery.result import AsyncResult
-
-worker = Celery(
-    __name__,
-    broker="redis://redis:6379/0", # Change to localhost when running natively.
-    backend="redis://redis:6379/0", # Change to redis when running inside a container.
-)
+from api.router import task
 
 api = FastAPI()
+
+
+api.include_router(task.router)
 
 
 class RootResponse(BaseModel):
@@ -45,15 +41,3 @@ async def favicon():
 
     # The / operator in Path objects is overloaded to work as a path concatenation operator in Python’s pathlib module.
     return FileResponse(Path(__file__).parent / "favicon.ico")
-
-
-@api.post("/task/sleep")
-async def run_task(duration : float):
-    result: AsyncResult = worker.send_task("sleep_task", kwargs={"duration": duration})
-    return {"task_id": result.id}
-
-
-@api.get("/task/{task_id}")
-async def get_task_status(task_id : str):
-    result : AsyncResult = AsyncResult(task_id)
-    return {"status": result.status, "result": result.result}

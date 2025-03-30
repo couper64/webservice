@@ -79,17 +79,17 @@ Once the computer is booted up and user logged in. Open a terminal with the inst
 
 Open a terminal in the root folder of the project and run the following command.
 
-    fastapi dev app/main.py
+    fastapi dev api/main.py
 
 To run `celery`, the following command will launch it from a terminal, in Windows.
 
 > :warning: To run this command, install `eventlet`, e.g. `pip install eventlet`.
 
-    celery -A app.worker worker --loglevel=info -P eventlet
+    celery -A worker.main worker --loglevel=info -P eventlet
 
 The rest could use a regular command.
 
-    celery -A app.worker worker --loglevel=info
+    celery -A worker.main worker --loglevel=info
 
 To setup `redis`, on Windows, it requires WSL2, by default, it is Ubuntu. The following should be run with Administrator privileges from PowerShell.
 
