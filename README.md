@@ -2,11 +2,74 @@
 
 This is a web service based on FastAPI.
 
+# Getting Started
+
+These are instructions for the deployment. For the software to work, I had to assume a couple of things. Firstly, the software was developed for Ubuntu 24.04 OS as it is considered one of the most common and, perhaps, the easiest Linux distribution to obtain, maintain, and develop for. And, in my opinion, that ubiquity also helps passing down the software from one person to another. Secondly, the software is developed with Kubernetes and Docker in mind, but native installation is also possible as an additional option. Thirdly, the operating system has been setup in a certain way that is documented in the [main manual](https://vladislav.li/manual/).
+
+Once the computer is booted up and a user is logged in. Open a terminal to download the code and switch the repo directory.
+
+> :info: We are using `psycopg` instead of `psycopg2` and `psycopg2-binary` as it is deemed to be next-generation async-capable PostgreSQL driver for async applications (FastAPI, asyncio, etc.).
+
+    git clone git@github.com:couper64/webservice.git webservice
+    cd webservice
+
+The dependencies of the webservice should be initialised before the API. Starting from PostgreSQL.
+
+> :warning: Don't forget to change the email and password!
+
+    docker run -d --network webservice --name postgres -e POSTGRES_PASSWORD=mysecretpassword --rm postgres
+
+Create folder for file storage.
+
+    mkdir -p data
+
+To run MinIO service.
+
+    docker run \
+        -d \
+        --network webservice \
+        -p 9000:9000 \
+        -p 9001:9001 \
+        --name minio \
+        -v data:/data \
+        -e "MINIO_ROOT_USER=ROOTNAME" \
+        -e "MINIO_ROOT_PASSWORD=CHANGEME123" \
+        quay.io/minio/minio server /data --console-address ":9001"
+
+To run Redis.
+
+    docker run -d --network webservice --name redis --rm redis
+
+Additionally, if there isn't any web interface available, the following command will start `pgadmin4`.
+
+> :warning: Don't forget to change the email and password!
+
+    docker run -d --network webservice -p 8080:80 --name pgadmin4 -e "PGADMIN_DEFAULT_EMAIL=test@test.com" -e "PGADMIN_DEFAULT_PASSWORD=test1234" dpage/pgadmin4
+
+In the same terminal in the root folder of the project run the following command to build the Docker images.
+
+    docker build -t fastapi-app -f Dockerfile.fastapi .
+    docker build -t celery-app -f Dockerfile.celery .
+
+Create a single network for all of the containers involved in the project.
+
+    docker network create webservice
+
+The following command will run the container in "*detached*" mode with the same name as the Docker image whilst forwarding host's port 8000 to container's port 8000.
+
+    docker run -d --network webservice --name fastapi-app --rm --publish 8000:8000 fastapi-app
+    docker run -d --network webservice --name celery-app --rm celery-app
+
+To view the status of the container, this command will show the logs in real-time.
+
+    docker logs -f fastapi-app
+    docker logs -f celery-app
+
 # Installation
 
-Open a terminal with the installed Conda package manager and run the following commands.
+Once the computer is booted up and user logged in. Open a terminal with the installed Conda package manager and run the following commands.
 
-    git clone git@github.com:couper64/webservice.git
+    git clone git@github.com:couper64/webservice.git webservice
     cd webservice
     conda create -yn webservice python=3
     conda activate webservice
@@ -70,64 +133,6 @@ From PowerShell, the following command will check the status of the task.
 To check the status of `redis-server.service`, on Linux and WSL.
 
     sudo systemctl status redis-server.service
-
-# How to Run Dockerfile
-
-Open a terminal in the root folder of the project and run the following command to build the Docker image.
-
-    docker build -t fastapi-app -f Dockerfile.fastapi .
-    docker build -t celery-app -f Dockerfile.celery .
-
-Create a single network for all of the containers involved in the project.
-
-    docker network create webservice
-
-The following command will run the container in "*detached*" mode with the same name as the Docker image whilst forwarding host's port 8000 to container's port 8000.
-
-    docker run -d --network webservice --name fastapi-app --rm --publish 8000:8000 fastapi-app
-    docker run -d --network webservice --name celery-app --rm celery-app
-
-To view the status of the container, this command will show the logs in real-time.
-
-    docker logs -f fastapi-app
-    docker logs -f celery-app
-
-# How to Run Redis
-
-From the terminal, run the following command.
-
-    docker run -d --network webservice --name redis --rm redis
-
-# How to Run PostgreSQL
-
-From the terminal, run the following command.
-
-> :warning: Don't forget to change the password!
-
-    docker run -d --network webservice --name postgres -e POSTGRES_PASSWORD=mysecretpassword --rm postgres
-
-Additionally, if there isn't any web interface available, the following command will start `pgadmin4`.
-
-> :warning: Don't forget to change the email and password!
-
-    docker run -d --name pgadmin4 -e "PGADMIN_DEFAULT_EMAIL=test@test.com" -e "PGADMIN_DEFAULT_PASSWORD=test1234" -p 8080:80 dpage/pgadmin4
-
-# How to Run MinIO
-
-From the terminal, run the following command.
-
-> :warning: Don't forget to change the email and password!
-
-    mkdir -p data
-
-    docker run \
-        -p 9000:9000 \
-        -p 9001:9001 \
-        --name minio \
-        -v data:/data \
-        -e "MINIO_ROOT_USER=ROOTNAME" \
-        -e "MINIO_ROOT_PASSWORD=CHANGEME123" \
-        quay.io/minio/minio server /data --console-address ":9001"
 
 # Project Structure
 
