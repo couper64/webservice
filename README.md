@@ -98,6 +98,37 @@ From the terminal, run the following command.
 
     docker run -d --network webservice --name redis --rm redis
 
+# How to Run PostgreSQL
+
+From the terminal, run the following command.
+
+> :warning: Don't forget to change the password!
+
+    docker run -d --network webservice --name postgres -e POSTGRES_PASSWORD=mysecretpassword --rm postgres
+
+Additionally, if there isn't any web interface available, the following command will start `pgadmin4`.
+
+> :warning: Don't forget to change the email and password!
+
+    docker run -d --name pgadmin4 -e "PGADMIN_DEFAULT_EMAIL=test@test.com" -e "PGADMIN_DEFAULT_PASSWORD=test1234" -p 8080:80 dpage/pgadmin4
+
+# How to Run MinIO
+
+From the terminal, run the following command.
+
+> :warning: Don't forget to change the email and password!
+
+    mkdir -p data
+
+    docker run \
+        -p 9000:9000 \
+        -p 9001:9001 \
+        --name minio \
+        -v data:/data \
+        -e "MINIO_ROOT_USER=ROOTNAME" \
+        -e "MINIO_ROOT_PASSWORD=CHANGEME123" \
+        quay.io/minio/minio server /data --console-address ":9001"
+
 # Project Structure
 
 Following the advices on the [official documentation](https://fastapi.tiangolo.com/tutorial/bigger-applications/), [GitHub](https://github.com/zhanymkanov/fastapi-best-practices?tab=readme-ov-file#project-structure), and [Medium](https://medium.com/@amirm.lavasani/how-to-structure-your-fastapi-projects-0219a6600a8f), this project is going to be adhere to a microservice architecture. Thus, the top folder that contains most of the logic will be named `app` as per the [official documentation](https://fastapi.tiangolo.com/tutorial/bigger-applications/).
