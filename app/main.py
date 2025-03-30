@@ -41,7 +41,7 @@ async def favicon():
     return FileResponse(Path(__file__).parent / "favicon.ico")
 
 
-@app.post("/task/sleep/")
+@app.post("/task/sleep")
 async def run_task(duration : float):
     result : AsyncResult = sleep_task.delay(duration)
     return {"task_id": result.id}
