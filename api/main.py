@@ -6,8 +6,14 @@ from pydantic import BaseModel
 
 from pathlib import Path
 
+from celery import Celery
 from celery.result import AsyncResult
-from api.task.sleep_task import sleep_task
+
+worker = Celery(
+    __name__,
+    broker="redis://redis:6379/0", # Change to localhost when running natively.
+    backend="redis://redis:6379/0", # Change to redis when running inside a container.
+)
 
 api = FastAPI()
 
@@ -43,7 +49,7 @@ async def favicon():
 
 @api.post("/task/sleep")
 async def run_task(duration : float):
-    result : AsyncResult = sleep_task.delay(duration)
+    result: AsyncResult = worker.send_task("sleep_task", kwargs={"duration": duration})
     return {"task_id": result.id}
 
 

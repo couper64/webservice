@@ -33,6 +33,6 @@ EXPOSE 8000
 
 # Why CMD and not ENTRYPOINT?
 # CMD is used because it allows flexibility—if a user wants to override the command (e.g., run a different FastAPI app or shell into the container), they can do so easily. ENTRYPOINT, on the other hand, is more rigid and is typically used when the container should always run a specific executable.
-# What does "api.worker" mean?
-# "api.worker" tells Uvicorn to look for the FastAPI application inside the worker.py file within the api package. The api refers to the folder (api/), worker refers to the Python module (worker.py).
-CMD ["celery", "-A", "api.worker", "worker", "--loglevel=info"]
+# What does "worker.main" mean?
+# "worker.main" tells Uvicorn to look for the FastAPI application inside the main.py file within the worker package. The worker refers to the folder (worker/), main refers to the Python module (main.py).
+CMD ["celery", "-A", "worker.main", "worker", "--loglevel=info"]
