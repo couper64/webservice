@@ -85,11 +85,11 @@ To run `celery`, the following command will launch it from a terminal, in Window
 
 > :warning: To run this command, install `eventlet`, e.g. `pip install eventlet`.
 
-    celery -A app.celery_worker worker --loglevel=info -P eventlet
+    celery -A app.worker worker --loglevel=info -P eventlet
 
 The rest could use a regular command.
 
-    celery -A app.celery_worker worker --loglevel=info
+    celery -A app.worker worker --loglevel=info
 
 To setup `redis`, on Windows, it requires WSL2, by default, it is Ubuntu. The following should be run with Administrator privileges from PowerShell.
 
