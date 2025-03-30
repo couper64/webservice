@@ -33,6 +33,6 @@ EXPOSE 8000
 
 # Why CMD and not ENTRYPOINT?
 # CMD is used because it allows flexibility—if a user wants to override the command (e.g., run a different FastAPI app or shell into the container), they can do so easily. ENTRYPOINT, on the other hand, is more rigid and is typically used when the container should always run a specific executable.
-# What does "app.main:app" mean?
-# "app.main:app" tells Uvicorn to look for the FastAPI application inside the main.py file within the app package. The first app refers to the folder (app/), main refers to the Python module (main.py), and the second app is the FastAPI instance inside main.py (app = FastAPI()).
-CMD ["uvicorn", "app.main:app", "--host", "0.0.0.0", "--port", "8000"]
+# What does "api.main:api" mean?
+# "api.main:api" tells Uvicorn to look for the FastAPI application inside the main.py file within the api package. The first api refers to the folder (api/), main refers to the Python module (main.py), and the second api is the FastAPI instance inside main.py (api = FastAPI()).
+CMD ["uvicorn", "api.main:api", "--host", "0.0.0.0", "--port", "8000"]
