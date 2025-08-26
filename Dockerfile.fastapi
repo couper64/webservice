@@ -5,7 +5,7 @@ FROM python:3.11-slim AS builder
 WORKDIR /webservice
 
 # Assuming this file is right next to Dockerfile.
-COPY requirements.txt .
+COPY api/requirements.txt .
 
 # Install dependencies without caching to reduce image size and store them in a temporary location.
 RUN pip install --no-cache-dir --prefix=/install -r requirements.txt
@@ -22,7 +22,7 @@ WORKDIR /webservice
 COPY --from=builder /install /usr/local
 
 # Assuming this folder is right next to Dockerfile.
-COPY app ./app
+COPY api ./api
 
 # Set environment variables to avoid user interaction during package installation.
 ENV PYTHONDONTWRITEBYTECODE=1 \
