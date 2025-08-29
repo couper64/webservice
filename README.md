@@ -13,6 +13,14 @@ Once the computer is booted up and a user is logged in. Open a terminal to downl
     git clone git@github.com:couper64/webservice.git webservice
     cd webservice
 
+All of the dependencies should be on the same network for a sucessfull communication.
+
+    docker network list
+
+If network doesn't exist than create a new one. Create a single network for all of the containers involved in the project.
+
+    docker network create webservice
+
 The dependencies of the webservice should be initialised before the API. Starting from PostgreSQL.
 
 > :warning: Don't forget to change the email and password!
@@ -50,10 +58,6 @@ In the same terminal in the root folder of the project run the following command
 
     docker build -t fastapi-app -f Dockerfile.fastapi .
     docker build -t celery-app -f Dockerfile.celery .
-
-Create a single network for all of the containers involved in the project.
-
-    docker network create webservice
 
 The following command will run the container in "*detached*" mode with the same name as the Docker image whilst forwarding host's port 8000 to container's port 8000.
 
