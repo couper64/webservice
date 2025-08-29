@@ -129,10 +129,19 @@ From PowerShell, the following command will create a task.
         -Method Post `
         -Headers @{ "Content-Type" = "application/json" }
 
+From the Ubuntu terminal, the following command will create a task.
+
+    curl -L -X POST "http://localhost:8000/task/sleep/?duration=60" \
+        -H "Content-Type: application/json"
+
 From PowerShell, the following command will check the status of the task.
 
     clear ; Invoke-WebRequest -Uri "http://localhost:8000/task/e58f6e2c-cbab-4f62-921a-b404bb45172b" `
         -Method Get
+
+From the Ubuntu terminal, the following command will check the status of the task.
+
+    curl -X GET "http://localhost:8000/task/e58f6e2c-cbab-4f62-921a-b404bb45172b"
 
 To check the status of `redis-server.service`, on Linux and WSL.
 
