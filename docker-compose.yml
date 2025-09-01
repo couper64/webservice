@@ -1,12 +1,12 @@
 services:
 
-  postgres:
+  hubdb:
     image: postgres
     container_name: ${CONTAINER_POSTGRES}
     environment:
       POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
     volumes:
-      - postgres_data:/var/lib/postgresql/data
+      - hubdb_data:/var/lib/postgresql/data
     networks:
       - hub
     restart: unless-stopped
@@ -43,7 +43,7 @@ services:
     volumes:
       - pgadmin4_data:/var/lib/pgadmin
     ports:
-      - "8080:80"
+      - "8082:80"
     networks:
       - hub
     restart: unless-stopped
@@ -59,7 +59,7 @@ services:
       - hub
     restart: unless-stopped
     depends_on:
-      - postgres
+      - hubdb
       - redis
       - minio
 
@@ -73,7 +73,7 @@ services:
     restart: unless-stopped
     depends_on:
       - redis
-      - postgres
+      - hubdb
       - minio
 
 networks:
@@ -81,6 +81,6 @@ networks:
     external: true
 
 volumes:
-  postgres_data:
+  hubdb_data:
   minio_data:
   pgadmin4_data:
