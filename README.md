@@ -2,7 +2,56 @@
 
 This is a web service based on FastAPI.
 
-# Getting Started
+# How to Make .env File
+
+Below is an example of a `.env` created the root folder of the project.
+
+    NETWORK_NAME=webservice
+
+    VOLUME_MINIO=minio_data
+    VOLUME_POSTGRES=postgres_data
+    VOLUME_PGADMIN4=pgadmin4_data
+
+    CONTAINER_POSTGRES=postgres
+    CONTAINER_MINIO=minio
+    CONTAINER_REDIS=redis
+    CONTAINER_PGADMIN=pgadmin4
+    CONTAINER_FASTAPI=fastapi_app
+    CONTAINER_CELERY=celery_app
+
+    POSTGRES_PASSWORD=mysecretpassword
+    MINIO_ROOT_USER=ROOTNAME
+    MINIO_ROOT_PASSWORD=CHANGEME123
+    PGADMIN_DEFAULT_EMAIL=admin@admin.com
+    PGADMIN_DEFAULT_PASSWORD=admin
+
+# How to Run using Docker Compose
+
+The command below will build any updated images and start the containers in detached mode.
+
+    docker compose up --build --detach
+
+Run the command below in the same directory as your docker-compose.yml to stop and remove all containers, networks, and volumes created by the stack.
+
+    docker compose down --volumes
+
+Use command below to restart only that specific container without affecting the others.
+
+    docker compose restart <service_name>
+
+Add the new service definition to `docker-compose.yml` and run command below to start it without disrupting the rest.
+
+    docker compose up --detach <service_name>
+
+Use the command below to view the logs in real-time (`-f`).
+
+    docker compose logs -f
+
+To view an individual container in real-time (`-f`) use the command below.
+
+    docker compose logs -f <service_name>
+
+# How to Run Docker CLI from Terminal
 
 These are instructions for the deployment. For the software to work, I had to assume a couple of things. Firstly, the software was developed for Ubuntu 24.04 OS as it is considered one of the most common and, perhaps, the easiest Linux distribution to obtain, maintain, and develop for. And, in my opinion, that ubiquity also helps passing down the software from one person to another. Secondly, the software is developed with Kubernetes and Docker in mind, but native installation is also possible as an additional option. Thirdly, the operating system has been setup in a certain way that is documented in the [main manual](https://vladislav.li/manual/).
 
@@ -69,56 +118,7 @@ To view the status of the container, this command will show the logs in real-tim
     docker logs -f fastapi-app
     docker logs -f celery-app
 
-# How to Make .env File
-
-Below is an example of a `.env` created the root folder of the project.
-
-    NETWORK_NAME=webservice
-
-    VOLUME_MINIO=minio_data
-    VOLUME_POSTGRES=postgres_data
-    VOLUME_PGADMIN4=pgadmin4_data
-
-    CONTAINER_POSTGRES=postgres
-    CONTAINER_MINIO=minio
-    CONTAINER_REDIS=redis
-    CONTAINER_PGADMIN=pgadmin4
-    CONTAINER_FASTAPI=fastapi_app
-    CONTAINER_CELERY=celery_app
-
-    POSTGRES_PASSWORD=mysecretpassword
-    MINIO_ROOT_USER=ROOTNAME
-    MINIO_ROOT_PASSWORD=CHANGEME123
-    PGADMIN_DEFAULT_EMAIL=admin@admin.com
-    PGADMIN_DEFAULT_PASSWORD=admin
-
-# How to Run using Docker Compose
-
-The command below will build any updated images and start the containers in detached mode.
-
-    docker compose up --build --detach
-
-Run the command below in the same directory as your docker-compose.yml to stop and remove all containers, networks, and volumes created by the stack.
-
-    docker compose down --volumes
-
-Use command below to restart only that specific container without affecting the others.
-
-    docker compose restart <service_name>
-
-Add the new service definition to `docker-compose.yml` and run command below to start it without disrupting the rest.
-
-    docker compose up --detach <service_name>
-
-Use the command below to view the logs in real-time (`-f`).
-
-    docker compose logs -f
-
-To view an individual container in real-time (`-f`) use the command below.
-
-    docker compose logs -f <service_name>
-
-# Installation
+# How to Natively Run from Terminal
 
 Once the computer is booted up and user logged in. Open a terminal with the installed Conda package manager and run the following commands.
 
@@ -127,8 +127,6 @@ Once the computer is booted up and user logged in. Open a terminal with the inst
     conda create -yn webservice python=3
     conda activate webservice
     pip install -r requirements.txt
-
-# How to Run from Terminal
 
 Open a terminal in the root folder of the project and run the following command.
 
@@ -217,8 +215,6 @@ Knowing the internet, it will be updated and lost forever, so here is a copy of 
 
 # Roadmap
 
-Use `celery` with `redis` to create asynchronous task execution with task queueing. Integrate the idea of "*Returning Task ID and Checking Progress via Polling*" at, for example, the `/task-status/{task_id}` endpoint. Otherwise, experiment with the WebSocket connection.
-
-Store the results in a file server using `minio`. In case of textual information, store the results in a database using `postgresql`.
-
-Configure a `docker-compose.yml` file to run the entire project with the dependencies at once.
+- [x] Use `celery` with `redis` to create asynchronous task execution with task queueing. Integrate the idea of "*Returning Task ID and Checking Progress via Polling*" at, for example, the `/task-status/{task_id}` endpoint. Otherwise, experiment with the WebSocket connection.
+- [x] Store the results in a file server using `minio`. In case of textual information, store the results in a database using `postgresql`.
+- [x] Configure a `docker-compose.yml` file to run the entire project with the dependencies at once.
