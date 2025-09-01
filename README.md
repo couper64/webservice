@@ -69,6 +69,29 @@ To view the status of the container, this command will show the logs in real-tim
     docker logs -f fastapi-app
     docker logs -f celery-app
 
+# How to Make .env File
+
+Below is an example of a `.env` created the root folder of the project.
+
+    NETWORK_NAME=webservice
+
+    VOLUME_MINIO=minio_data
+    VOLUME_POSTGRES=postgres_data
+    VOLUME_PGADMIN4=pgadmin4_data
+
+    CONTAINER_POSTGRES=postgres
+    CONTAINER_MINIO=minio
+    CONTAINER_REDIS=redis
+    CONTAINER_PGADMIN=pgadmin4
+    CONTAINER_FASTAPI=fastapi_app
+    CONTAINER_CELERY=celery_app
+
+    POSTGRES_PASSWORD=mysecretpassword
+    MINIO_ROOT_USER=ROOTNAME
+    MINIO_ROOT_PASSWORD=CHANGEME123
+    PGADMIN_DEFAULT_EMAIL=admin@admin.com
+    PGADMIN_DEFAULT_PASSWORD=admin
+
 # Installation
 
 Once the computer is booted up and user logged in. Open a terminal with the installed Conda package manager and run the following commands.
