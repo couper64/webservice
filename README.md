@@ -110,6 +110,14 @@ Add the new service definition to `docker-compose.yml` and run command below to 
 
     docker compose up --detach <service_name>
 
+Use the command below to view the logs in real-time (`-f`).
+
+    docker compose logs -f
+
+To view an individual container in real-time (`-f`) use the command below.
+
+    docker compose logs -f <service_name>
+
 # Installation
 
 Once the computer is booted up and user logged in. Open a terminal with the installed Conda package manager and run the following commands.

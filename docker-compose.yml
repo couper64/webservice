@@ -2,53 +2,57 @@ services:
 
   postgres:
     image: postgres
-    container_name: postgres
+    container_name: ${CONTAINER_POSTGRES}
     environment:
-      POSTGRES_PASSWORD: mysecretpassword
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
     networks:
       - webservice
     restart: unless-stopped
 
   minio:
     image: quay.io/minio/minio
-    container_name: minio
+    container_name: ${CONTAINER_MINIO}
     command: server /data --console-address ":9001"
+    environment:
+      MINIO_ROOT_USER: ${MINIO_ROOT_USER}
+      MINIO_ROOT_PASSWORD: ${MINIO_ROOT_PASSWORD}
+    volumes:
+      - minio_data:/data
     ports:
       - "9000:9000"
       - "9001:9001"
-    environment:
-      MINIO_ROOT_USER: ROOTNAME
-      MINIO_ROOT_PASSWORD: CHANGEME123
-    volumes:
-      - minio_data:/data
     networks:
       - webservice
     restart: unless-stopped
 
   redis:
     image: redis
-    container_name: redis
+    container_name: ${CONTAINER_REDIS}
     networks:
       - webservice
     restart: unless-stopped
 
   pgadmin4:
     image: dpage/pgadmin4
-    container_name: pgadmin4
+    container_name: ${CONTAINER_PGADMIN}
+    environment:
+      PGADMIN_DEFAULT_EMAIL: ${PGADMIN_DEFAULT_EMAIL}
+      PGADMIN_DEFAULT_PASSWORD: ${PGADMIN_DEFAULT_PASSWORD}
+    volumes:
+      - pgadmin4_data:/var/lib/pgadmin
     ports:
       - "8080:80"
-    environment:
-      PGADMIN_DEFAULT_EMAIL: admin@admin.com
-      PGADMIN_DEFAULT_PASSWORD: admin
     networks:
       - webservice
     restart: unless-stopped
 
-  fastapi-app:
+  fastapi_app:
     build:
       context: .
       dockerfile: Dockerfile.fastapi
-    container_name: fastapi-app
+    container_name: ${CONTAINER_FASTAPI}
     ports:
       - "8000:8000"
     networks:
@@ -59,11 +63,11 @@ services:
       - redis
       - minio
 
-  celery-app:
+  celery_app:
     build:
       context: .
       dockerfile: Dockerfile.celery
-    container_name: celery-app
+    container_name: ${CONTAINER_CELERY}
     networks:
       - webservice
     restart: unless-stopped
@@ -77,4 +81,6 @@ networks:
     driver: bridge
 
 volumes:
+  postgres_data:
   minio_data:
+  pgadmin4_data:
