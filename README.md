@@ -92,6 +92,24 @@ Below is an example of a `.env` created the root folder of the project.
     PGADMIN_DEFAULT_EMAIL=admin@admin.com
     PGADMIN_DEFAULT_PASSWORD=admin
 
+# How to Run using Docker Compose
+
+The command below will build any updated images and start the containers in detached mode.
+
+    docker compose up --build --detach
+
+Run the command below in the same directory as your docker-compose.yml to stop and remove all containers, networks, and volumes created by the stack.
+
+    docker compose down --volumes
+
+Use command below to restart only that specific container without affecting the others.
+
+    docker compose restart <service_name>
+
+Add the new service definition to `docker-compose.yml` and run command below to start it without disrupting the rest.
+
+    docker compose up --detach <service_name>
+
 # Installation
 
 Once the computer is booted up and user logged in. Open a terminal with the installed Conda package manager and run the following commands.

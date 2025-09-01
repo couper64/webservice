@@ -1,0 +1,80 @@
+services:
+
+  postgres:
+    image: postgres
+    container_name: postgres
+    environment:
+      POSTGRES_PASSWORD: mysecretpassword
+    networks:
+      - webservice
+    restart: unless-stopped
+
+  minio:
+    image: quay.io/minio/minio
+    container_name: minio
+    command: server /data --console-address ":9001"
+    ports:
+      - "9000:9000"
+      - "9001:9001"
+    environment:
+      MINIO_ROOT_USER: ROOTNAME
+      MINIO_ROOT_PASSWORD: CHANGEME123
+    volumes:
+      - minio_data:/data
+    networks:
+      - webservice
+    restart: unless-stopped
+
+  redis:
+    image: redis
+    container_name: redis
+    networks:
+      - webservice
+    restart: unless-stopped
+
+  pgadmin4:
+    image: dpage/pgadmin4
+    container_name: pgadmin4
+    ports:
+      - "8080:80"
+    environment:
+      PGADMIN_DEFAULT_EMAIL: admin@admin.com
+      PGADMIN_DEFAULT_PASSWORD: admin
+    networks:
+      - webservice
+    restart: unless-stopped
+
+  fastapi-app:
+    build:
+      context: .
+      dockerfile: Dockerfile.fastapi
+    container_name: fastapi-app
+    ports:
+      - "8000:8000"
+    networks:
+      - webservice
+    restart: unless-stopped
+    depends_on:
+      - postgres
+      - redis
+      - minio
+
+  celery-app:
+    build:
+      context: .
+      dockerfile: Dockerfile.celery
+    container_name: celery-app
+    networks:
+      - webservice
+    restart: unless-stopped
+    depends_on:
+      - redis
+      - postgres
+      - minio
+
+networks:
+  webservice:
+    driver: bridge
+
+volumes:
+  minio_data:
