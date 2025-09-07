@@ -218,3 +218,7 @@ Knowing the internet, it will be updated and lost forever, so here is a copy of 
 - [x] Use `celery` with `redis` to create asynchronous task execution with task queueing. Integrate the idea of "*Returning Task ID and Checking Progress via Polling*" at, for example, the `/task-status/{task_id}` endpoint. Otherwise, experiment with the WebSocket connection.
 - [x] Store the results in a file server using `minio`. In case of textual information, store the results in a database using `postgresql`.
 - [x] Configure a `docker-compose.yml` file to run the entire project with the dependencies at once.
+
+# Integration
+
+This `webservice` is used to ease both the development and integration. When a developer uses this project, they could develop on their own by deploying everything locally and ensure everything is operational. However, during the integration, the project is added as a *component* and its local `docker-compose.yml` is utilised for a global `docker-compose.yml` that is composed of all the `docker-compose.yml` files found in the *components* of the more global project.
