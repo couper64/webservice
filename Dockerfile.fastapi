@@ -36,4 +36,4 @@ EXPOSE 8000
 # What does "api.main:api" mean?
 # "api.main:api" tells Uvicorn to look for the FastAPI application inside the main.py file within the api package. The first api refers to the folder (api/), main refers to the Python module (main.py), and the second api is the FastAPI instance inside main.py (api = FastAPI()).
 # Another note, without "--root-path", "/docs", i.e. Swagger UI, will stop working.
-CMD ["uvicorn", "api.main:api", "--host", "0.0.0.0", "--port", "8000", "--proxy-headers", "--forwarded-allow-ips", "*", "--root-path", "/raido/tool/generate/data/synthetic/"]
+CMD ["uvicorn", "api.main:api", "--host", "0.0.0.0", "--port", "8000", "--proxy-headers", "--forwarded-allow-ips", "*", "--root-path", "/webservice"]
