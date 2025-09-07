@@ -2,7 +2,7 @@ services:
 
   postgres:
     image: postgres
-    container_name: ${CONTAINER_POSTGRES}
+    container_name: postgres
     environment:
       POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
     volumes:
@@ -13,7 +13,7 @@ services:
 
   minio:
     image: quay.io/minio/minio
-    container_name: ${CONTAINER_MINIO}
+    container_name: minio
     command: server /data --console-address ":9001"
     environment:
       MINIO_ROOT_USER: ${MINIO_ROOT_USER}
@@ -29,14 +29,14 @@ services:
 
   redis:
     image: redis
-    container_name: ${CONTAINER_REDIS}
+    container_name: redis
     networks:
       - webservice
     restart: unless-stopped
 
   pgadmin4:
     image: dpage/pgadmin4
-    container_name: ${CONTAINER_PGADMIN}
+    container_name: pgadmin4
     environment:
       PGADMIN_DEFAULT_EMAIL: ${PGADMIN_DEFAULT_EMAIL}
       PGADMIN_DEFAULT_PASSWORD: ${PGADMIN_DEFAULT_PASSWORD}
@@ -52,7 +52,7 @@ services:
     build:
       context: .
       dockerfile: Dockerfile.fastapi
-    container_name: ${CONTAINER_FASTAPI}
+    container_name: fastapi_app
     ports:
       - "8000:8000"
     networks:
@@ -67,7 +67,7 @@ services:
     build:
       context: .
       dockerfile: Dockerfile.celery
-    container_name: ${CONTAINER_CELERY}
+    container_name: celery_app
     networks:
       - webservice
     restart: unless-stopped
