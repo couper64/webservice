@@ -19,7 +19,7 @@ Below is an example of a `.env` created the root folder of the project.
     CONTAINER_FASTAPI=fastapi_app
     CONTAINER_CELERY=celery_app
 
-    POSTGRES_PASSWORD=mysecretpassword
+    POSTGRES_PASSWORD=password
     MINIO_ROOT_USER=ROOTNAME
     MINIO_ROOT_PASSWORD=CHANGEME123
     PGADMIN_DEFAULT_EMAIL=admin@admin.com
