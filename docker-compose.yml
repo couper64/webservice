@@ -1,14 +1,14 @@
 services:
 
-  hubdb:
+  postgres:
     image: postgres
     container_name: ${CONTAINER_POSTGRES}
     environment:
       POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
     volumes:
-      - hubdb_data:/var/lib/postgresql/data
+      - postgres_data:/var/lib/postgresql/data
     networks:
-      - hub
+      - webservice
     restart: unless-stopped
 
   minio:
@@ -24,14 +24,14 @@ services:
       - "9000:9000"
       - "9001:9001"
     networks:
-      - hub
+      - webservice
     restart: unless-stopped
 
   redis:
     image: redis
     container_name: ${CONTAINER_REDIS}
     networks:
-      - hub
+      - webservice
     restart: unless-stopped
 
   pgadmin4:
@@ -45,7 +45,7 @@ services:
     ports:
       - "8082:80"
     networks:
-      - hub
+      - webservice
     restart: unless-stopped
 
   fastapi_app:
@@ -56,10 +56,10 @@ services:
     ports:
       - "8000:8000"
     networks:
-      - hub
+      - webservice
     restart: unless-stopped
     depends_on:
-      - hubdb
+      - postgres
       - redis
       - minio
 
@@ -69,18 +69,18 @@ services:
       dockerfile: Dockerfile.celery
     container_name: ${CONTAINER_CELERY}
     networks:
-      - hub
+      - webservice
     restart: unless-stopped
     depends_on:
       - redis
-      - hubdb
+      - postgres
       - minio
 
 networks:
-  hub:
-    external: true
+  webservice:
+    driver: bridge
 
 volumes:
-  hubdb_data:
+  postgres_data:
   minio_data:
   pgadmin4_data:
