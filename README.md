@@ -172,13 +172,13 @@ Expected output is `PONG`.
 
 From PowerShell, the following command will create a task.
 
-    clear ; Invoke-WebRequest -Uri "http://localhost:8000/task/sleep/?duration=60" `
+    clear ; Invoke-WebRequest -Uri "http://localhost:8000/task/sleep?duration=60" `
         -Method Post `
         -Headers @{ "Content-Type" = "application/json" }
 
 From the Ubuntu terminal, the following command will create a task.
 
-    curl -L -X POST "http://localhost:8000/task/sleep/?duration=60" \
+    curl -L -X POST "http://localhost:8000/task/sleep?duration=60" \
         -H "Content-Type: application/json"
 
 From PowerShell, the following command will check the status of the task.
