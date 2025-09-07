@@ -113,6 +113,7 @@ The following command will run the container in "*detached*" mode with the same 
 
     docker run -d --network webservice --name fastapi-app --rm --publish 8000:8000 fastapi-app
     docker run -d --network webservice --name celery-app --rm celery-app
+    docker run -d --network webservice --name streamlit-app --rm --publish 8501:8501 streamlit-app
 
 To view the status of the container, this command will show the logs in real-time.
 
