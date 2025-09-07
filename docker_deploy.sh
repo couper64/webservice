@@ -49,4 +49,7 @@ docker run --detach --network "$NETWORK_NAME" --name "$CONTAINER_FASTAPI" --rm \
     -p 8000:8000 "$CONTAINER_FASTAPI"
 
 # Start worker
-docker run --detach --network "$NETWORK_NAME" --name "$CONTAINER_CELERY" --rm "$CONTAINER_FASTAPI"
+docker run --detach --network "$NETWORK_NAME" --name "$CONTAINER_CELERY" --rm "$CONTAINER_CELERY"
+
+# Start Web UI
+docker run -d --network "$NETWORK_NAME" --name "$CONTAINER_STREAMLIT" --rm --publish 8501:8501 "$CONTAINER_STREAMLIT"

@@ -53,4 +53,10 @@ else
     error_exit "Dockerfile.celery not found."
 fi
 
+if [ -f Dockerfile.streamlit ]; then
+    docker build -t "$CONTAINER_STREAMLIT" -f Dockerfile.streamlit . || error_exit "Failed to build "$CONTAINER_STREAMLIT" image."
+else
+    error_exit "Dockerfile.streamlit not found."
+fi
+
 echo "✅ All preparation tasks completed successfully!"

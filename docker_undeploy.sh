@@ -7,8 +7,8 @@ set -e
 source .env
 
 # Stop containers (ignore missing)
-for container in "$CONTAINER_FASTAPI" "$CONTAINER_CELERY" "$CONTAINER_PGADMIN" \
-                 "$CONTAINER_MINIO" "$CONTAINER_REDIS" "$CONTAINER_POSTGRES"; do
+for container in "$CONTAINER_STREAMLIT" "$CONTAINER_FASTAPI" "$CONTAINER_CELERY" "$CONTAINER_PGADMIN" \
+                 "$CONTAINER_MINIO" "$CONTAINER_REDIS" "$CONTAINER_POSTGRES" ; do
     if docker ps -a --format '{{.Names}}' | grep -wq "$container"; then
         echo "Stopping and removing container: $container"
         docker stop "$container" >/dev/null
