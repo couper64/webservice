@@ -19,6 +19,7 @@ Below is an example of a `.env` created the root folder of the project.
     CONTAINER_FASTAPI=fastapi_app
     CONTAINER_CELERY=celery_app
 
+    # Used in `docker-compose.yml` and Docker CLI.
     POSTGRES_PASSWORD=password
     MINIO_ROOT_USER=ROOTNAME
     MINIO_ROOT_PASSWORD=CHANGEME123
