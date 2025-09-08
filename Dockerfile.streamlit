@@ -28,6 +28,11 @@ COPY webui ./webui
 ENV PYTHONDONTWRITEBYTECODE=1 \
     PYTHONUNBUFFERED=1
 
+# Ensure Streamlit config disables usage stats.
+RUN mkdir -p ~/.streamlit && \
+    echo "[browser]" > ~/.streamlit/config.toml && \
+    echo "gatherUsageStats = false" >> ~/.streamlit/config.toml
+
 # Classic choice of port for Streamlit. It could be re-wired when starting the container.
 EXPOSE 8501
 
