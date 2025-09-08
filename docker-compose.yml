@@ -43,16 +43,16 @@ services:
     volumes:
       - pgadmin4_data:/var/lib/pgadmin
     ports:
-      - "8082:80"
+      - "5000:80"
     networks:
       - webservice
     restart: unless-stopped
 
-  fastapi_app:
+  fastapi:
     build:
       context: .
       dockerfile: Dockerfile.fastapi
-    container_name: fastapi_app
+    container_name: fastapi
     ports:
       - "8000:8000"
     networks:
@@ -63,11 +63,11 @@ services:
       - redis
       - minio
 
-  celery_app:
+  celery:
     build:
       context: .
       dockerfile: Dockerfile.celery
-    container_name: celery_app
+    container_name: celery
     networks:
       - webservice
     restart: unless-stopped
@@ -75,6 +75,22 @@ services:
       - redis
       - postgres
       - minio
+
+  streamlit:
+    build:
+      context: .
+      dockerfile: Dockerfile.streamlit
+    container_name: streamlit
+    ports:
+      - "8501:8501"  # Map container port 8501 to host
+    environment:
+      PYTHONDONTWRITEBYTECODE: 1
+      PYTHONUNBUFFERED: 1
+    networks:
+      - webservice
+    command: >
+      streamlit run webui/app.py
+      --server.address=0.0.0.0
 
 networks:
   webservice:
