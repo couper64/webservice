@@ -1,0 +1,13 @@
+services:
+
+  redis:
+    image: redis
+    container_name: redis
+
+  celery:
+    build:
+      context: .
+      dockerfile: Dockerfile.celery
+    container_name: celery
+    depends_on:
+      - redis
