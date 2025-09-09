@@ -62,7 +62,7 @@ async def favicon():
     # The / operator in Path objects is overloaded to work as a path concatenation operator in Python’s pathlib module.
     return FileResponse(Path(__file__).parent / "favicon.ico")
 
-@api.get("/get/url/upload/", response_model=UrlResponse)
+@api.get("/file/get/url/upload/", response_model=UrlResponse)
 def generate_upload_url(filename: str):
     # Expire in 1 hour.
     url = minio_client.presigned_put_object(
@@ -79,7 +79,7 @@ def generate_upload_url(filename: str):
         , expires = timedelta(hours=1).total_seconds()
     )
 
-@api.get("/get/url/download/", response_model=UrlResponse)
+@api.get("/file/get/url/download/", response_model=UrlResponse)
 def generate_download_url(filename: str):
     url = minio_client.presigned_get_object(
         MINIO_BUCKET_NAME,
