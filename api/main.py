@@ -64,7 +64,7 @@ def generate_upload_url(filename: str):
     url = minio_client.presigned_put_object(
         MINIO_BUCKET_NAME,
         filename,
-        expires=timedelta(hours=1)
+        expires=timedelta(hours=1),
     )
     return {"upload_url": url}
 

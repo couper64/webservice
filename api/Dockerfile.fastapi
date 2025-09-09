@@ -5,7 +5,7 @@ FROM python:3.11-slim AS builder
 WORKDIR /webservice
 
 # Assuming this file is right next to Dockerfile.
-COPY api/requirements.txt .
+COPY requirements.txt .
 
 # Install dependencies without caching to reduce image size and store them in a temporary location.
 RUN pip install --no-cache-dir --prefix=/install -r requirements.txt
@@ -22,7 +22,7 @@ WORKDIR /webservice
 COPY --from=builder /install /usr/local
 
 # Assuming this folder is right next to Dockerfile.
-COPY api ./api
+COPY . ./api
 
 # Set environment variables to avoid user interaction during package installation.
 ENV PYTHONDONTWRITEBYTECODE=1 \
@@ -37,4 +37,4 @@ EXPOSE 8000
 # "api.main:api" tells Uvicorn to look for the FastAPI application inside the main.py file within the api package. The first api refers to the folder (api/), main refers to the Python module (main.py), and the second api is the FastAPI instance inside main.py (api = FastAPI()).
 CMD ["uvicorn", "api.main:api", "--host", "0.0.0.0", "--port", "8000", "--proxy-headers", "--forwarded-allow-ips", "*"]
 # Another note, without "--root-path", "/docs", i.e. Swagger UI, will stop working.
-# CMD ["uvicorn", "api.main:api", "--host", "0.0.0.0", "--port", "8000", "--proxy-headers", "--forwarded-allow-ips", "*", "--root-path", "/webservice"]
+# CMD ["uvicorn", "api.main:api", "--host", "0.0.0.0", "--port", "8000", "--proxy-headers", "--forwarded-allow-ips", "*", "--root-path", "/api"]

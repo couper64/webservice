@@ -1,3 +1,12 @@
+networks:
+  webservice:
+    driver: bridge
+
+volumes:
+  postgres_data:
+  minio_data:
+  pgadmin4_data:
+
 services:
 
   postgres:
@@ -20,6 +29,7 @@ services:
     environment:
       MINIO_ROOT_USER: ${MINIO_ROOT_USER}
       MINIO_ROOT_PASSWORD: ${MINIO_ROOT_PASSWORD}
+      MINIO_BROWSER_REDIRECT_URL: http://localhost/minio/dashboard # Without it Minio doesn't know how to render itself under a subpath.
     volumes:
       - minio_data:/data
     ports:
@@ -52,7 +62,7 @@ services:
 
   fastapi:
     build:
-      context: .
+      context: api
       dockerfile: Dockerfile.fastapi
     container_name: fastapi
     ports:
@@ -64,10 +74,17 @@ services:
       - postgres
       - redis
       - minio
+    command: >
+      uvicorn api.main:api
+      --host 0.0.0.0
+      --port 8000
+      --proxy-headers
+      --forwarded-allow-ips '*'
+      --root-path /api
 
   celery:
     build:
-      context: .
+      context: worker
       dockerfile: Dockerfile.celery
     container_name: celery
     networks:
@@ -80,7 +97,7 @@ services:
 
   streamlit:
     build:
-      context: .
+      context: webui
       dockerfile: Dockerfile.streamlit
     container_name: streamlit
     ports:
@@ -94,11 +111,16 @@ services:
       streamlit run webui/app.py
       --server.address=0.0.0.0
 
-networks:
-  webservice:
-    driver: bridge
-
-volumes:
-  postgres_data:
-  minio_data:
-  pgadmin4_data:
+  openresty:
+    container_name: openresty
+    build:
+      context: proxy
+      dockerfile: Dockerfile.openresty
+    ports:
+      - "80:80"
+    networks:
+      - webservice
+    volumes:
+      - ./proxy/nginx.conf:/usr/local/openresty/nginx/conf/nginx.conf:ro
+      - ./proxy/favicon.ico:/usr/local/openresty/nginx/html/favicon.ico:ro
+      - ./proxy/lua:/etc/openresty/lua:ro
