@@ -1,0 +1,13 @@
+services:
+
+  openresty:
+    container_name: openresty
+    build:
+      context: .
+      dockerfile: Dockerfile.openresty
+    ports:
+      - "80:80"
+    volumes:
+      - ./proxy/nginx.conf:/usr/local/openresty/nginx/conf/nginx.conf:ro
+      - ./proxy/favicon.ico:/usr/local/openresty/nginx/html/favicon.ico:ro
+      - ./proxy/lua:/etc/openresty/lua:ro

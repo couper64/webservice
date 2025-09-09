@@ -1,0 +1,16 @@
+FROM openresty/openresty:alpine-fat
+
+RUN apk add --no-cache make gcc musl-dev postgresql-dev git
+
+RUN luarocks install lua-resty-openssl
+
+RUN luarocks install lpeg
+
+RUN luarocks install pgmoon
+
+RUN mkdir -p /usr/local/openresty/lua
+
+RUN mkdir -p /var/log/nginx
+
+WORKDIR /usr/local/openresty
+
