@@ -1,0 +1,15 @@
+services:
+
+  streamlit:
+    build:
+      context: .
+      dockerfile: Dockerfile.streamlit
+    container_name: streamlit
+    ports:
+      - "8501:8501"  # Map container port 8501 to host
+    environment:
+      PYTHONDONTWRITEBYTECODE: 1
+      PYTHONUNBUFFERED: 1
+    command: >
+      streamlit run webui/app.py
+      --server.address=0.0.0.0
