@@ -36,6 +36,10 @@ class RootResponse(BaseModel):
     time: str
     timezone: str
 
+class UrlResponse(BaseModel):
+    url: str
+    expires: float # `timedelta` - an ISO 8601 duration ("PT1H") is dicouraged due to many industry guidelines and API design standards recommend representing durations simply as seconds—preferably as integers or floats.
+
 
 @api.get("/", response_model=RootResponse)
 async def root():
@@ -58,7 +62,7 @@ async def favicon():
     # The / operator in Path objects is overloaded to work as a path concatenation operator in Python’s pathlib module.
     return FileResponse(Path(__file__).parent / "favicon.ico")
 
-@api.get("/generate_upload_url/")
+@api.get("/get/url/upload/", response_model=UrlResponse)
 def generate_upload_url(filename: str):
     # Expire in 1 hour.
     url = minio_client.presigned_put_object(
@@ -66,13 +70,27 @@ def generate_upload_url(filename: str):
         filename,
         expires=timedelta(hours=1),
     )
-    return {"upload_url": url}
 
-@api.get("/generate_download_url/")
+    # Because behind a proxy replace container with actual calling URL.
+    url = url.replace("http://minio:9000/", "/minio/api/")
+
+    return UrlResponse(
+        url       = url
+        , expires = timedelta(hours=1).total_seconds()
+    )
+
+@api.get("/get/url/download/", response_model=UrlResponse)
 def generate_download_url(filename: str):
     url = minio_client.presigned_get_object(
         MINIO_BUCKET_NAME,
         filename,
         expires=timedelta(hours=1)
     )
-    return {"download_url": url}
+
+    # Because behind a proxy.
+    url = url.replace("http://minio:9000/", "/minio/api/")
+
+    return UrlResponse(
+        url       = url
+        , expires = timedelta(hours=1).total_seconds()
+    )
