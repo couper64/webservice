@@ -2,6 +2,8 @@
 
 This is a web service based on FastAPI.
 
+For the software to work, I had to assume a couple of things. Firstly, the software was developed for Ubuntu 24.04 OS as it is considered one of the most common and, perhaps, the easiest Linux distribution to obtain, maintain, and develop for. And, in my opinion, that ubiquity also helps passing down the software from one person to another. Secondly, the software is developed with Docker in mind, but native installation is also possible as an additional option. Thirdly, the operating system has been setup in a certain way that is documented in the [main manual](https://vladislav.li/manual/).
+
 # How to Make .env File
 
 Below is an example of a `.env` created the root folder of the project.
@@ -16,8 +18,10 @@ Below is an example of a `.env` created the root folder of the project.
     CONTAINER_MINIO=minio
     CONTAINER_REDIS=redis
     CONTAINER_PGADMIN=pgadmin4
-    CONTAINER_FASTAPI=fastapi_app
-    CONTAINER_CELERY=celery_app
+    CONTAINER_FASTAPI=fastapi
+    CONTAINER_CELERY=celery
+    CONTAINER_STREAMLIT=streamlit
+    CONTAINER_OPENRESTY=openresty
 
     # Used in `docker-compose.yml` and Docker CLI.
     POSTGRES_PASSWORD=password
@@ -52,9 +56,28 @@ To view an individual container in real-time (`-f`) use the command below.
 
     docker compose logs -f <service_name>
 
-# How to Run Docker CLI from Terminal
+# How to Run using Shell Scripts based on Docker CLI
 
-These are instructions for the deployment. For the software to work, I had to assume a couple of things. Firstly, the software was developed for Ubuntu 24.04 OS as it is considered one of the most common and, perhaps, the easiest Linux distribution to obtain, maintain, and develop for. And, in my opinion, that ubiquity also helps passing down the software from one person to another. Secondly, the software is developed with Kubernetes and Docker in mind, but native installation is also possible as an additional option. Thirdly, the operating system has been setup in a certain way that is documented in the [main manual](https://vladislav.li/manual/).
+Once the computer is booted up and a user is logged in. Open a terminal to download the code and switch the repo directory.
+
+> :info: We are using `psycopg` instead of `psycopg2` and `psycopg2-binary` as it is deemed to be next-generation async-capable PostgreSQL driver for async applications (FastAPI, asyncio, etc.).
+
+    git clone git@github.com:couper64/webservice.git webservice
+    cd webservice
+
+Create the `.env` file at the root where the project will be started and copy the default values mentioned [above](#how-to-make-env-file) as a starting point.
+
+    touch .env
+
+The command below will create the required volumes and network proceeded by the deployment of all the containers.
+
+    ./docker_deploy.sh
+
+The command below will stop the containers and, additionally, it will prompt user to remove volumes and network.
+
+    ./docker_undeploy.sh
+
+# How to Run using Docker CLI
 
 Once the computer is booted up and a user is logged in. Open a terminal to download the code and switch the repo directory.
 
@@ -75,7 +98,7 @@ The dependencies of the webservice should be initialised before the API. Startin
 
 > :warning: Don't forget to change the email and password!
 
-    docker run -d --network webservice --name postgres -e POSTGRES_PASSWORD=mysecretpassword --rm postgres
+    docker run -d --network webservice --name postgres -e POSTGRES_PASSWORD=password --rm postgres
 
 Create folder for file storage.
 
@@ -106,19 +129,39 @@ Additionally, if there isn't any web interface available, the following command 
 
 In the same terminal in the root folder of the project run the following command to build the Docker images.
 
-    docker build -t fastapi-app -f Dockerfile.fastapi .
-    docker build -t celery-app -f Dockerfile.celery .
+    cd api
+    docker build -t fastapi -f Dockerfile.fastapi .
+    cd ../worker
+    docker build -t celery -f Dockerfile.celery .
+    cd ../webui
+    docker build -t streamlit -f Dockerfile.celery .
+    cd ../proxy
+    docker build -t openresty -f Dockerfile.openresty .
+
 
 The following command will run the container in "*detached*" mode with the same name as the Docker image whilst forwarding host's port 8000 to container's port 8000.
 
-    docker run -d --network webservice --name fastapi-app --rm --publish 8000:8000 fastapi-app
-    docker run -d --network webservice --name celery-app --rm celery-app
-    docker run -d --network webservice --name streamlit-app --rm --publish 8501:8501 streamlit-app
+    docker run -d --network webservice --name fastapi --rm --publish 8000:8000 fastapi
+    docker run -d --network webservice --name celery --rm celery
+    docker run -d --network webservice --name streamlit --rm --publish 8501:8501 streamlit
+    docker run --detach \
+    --name openresty \
+    --publish 80:80 \
+    --network webservice \
+    --name openresty \
+    -v $(pwd)/proxy/nginx.conf:/usr/local/openresty/nginx/conf/nginx.conf:ro \
+    -v $(pwd)/proxy/favicon.ico:/usr/local/openresty/nginx/html/favicon.ico:ro \
+    -v $(pwd)/proxy/lua:/etc/openresty/lua:ro \
+    --rm \
+    openresty
+
 
 To view the status of the container, this command will show the logs in real-time.
 
-    docker logs -f fastapi-app
-    docker logs -f celery-app
+    docker logs -f fastapi
+    docker logs -f celery
+    docker logs -f streamlit
+    docker logs -f openresty
 
 # How to Natively Run from Terminal
 
