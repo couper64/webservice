@@ -121,6 +121,16 @@ From the Ubuntu terminal, the following command will check the status of the tas
 
     curl -X GET "http://localhost:8000/task/e58f6e2c-cbab-4f62-921a-b404bb45172b"
 
+# How to Create Self-Signed Certificates
+
+The command below will generate new self-signed certificates.
+
+    ./proxy/ssl_create.sh
+
+The command bellow will add certificates to the machine so it could trust the device with the certificates.
+
+    ./proxy/ssl_trust.sh
+
 # Project Structure
 
 Following the advices on the [official documentation](https://fastapi.tiangolo.com/tutorial/bigger-applications/), [GitHub](https://github.com/zhanymkanov/fastapi-best-practices?tab=readme-ov-file#project-structure), and [Medium](https://medium.com/@amirm.lavasani/how-to-structure-your-fastapi-projects-0219a6600a8f), this project is going to be adhere to a microservice architecture. Thus, the top folder that contains most of the logic will be named `app` as per the [official documentation](https://fastapi.tiangolo.com/tutorial/bigger-applications/).

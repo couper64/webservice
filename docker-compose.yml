@@ -118,9 +118,11 @@ services:
       dockerfile: Dockerfile.openresty
     ports:
       - "80:80"
+      - "443:443"
     networks:
       - webservice
     volumes:
+      - ./proxy/ssl:/etc/ssl
       - ./proxy/nginx.conf:/usr/local/openresty/nginx/conf/nginx.conf:ro
       - ./proxy/favicon.ico:/usr/local/openresty/nginx/html/favicon.ico:ro
       - ./proxy/lua:/etc/openresty/lua:ro
