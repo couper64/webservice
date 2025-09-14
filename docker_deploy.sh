@@ -53,3 +53,15 @@ docker run --detach --network "$NETWORK_NAME" --name "$CONTAINER_CELERY" --rm "$
 
 # Start Web UI
 docker run -d --network "$NETWORK_NAME" --name "$CONTAINER_STREAMLIT" --rm --publish 8501:8501 "$CONTAINER_STREAMLIT"
+
+# Start proxy
+docker run --detach \
+  --name openresty \
+  --publish 80:80 \
+  --network "$NETWORK_NAME" \
+  --name "$CONTAINER_OPENRESTY" \
+  -v $(pwd)/proxy/nginx.conf:/usr/local/openresty/nginx/conf/nginx.conf:ro \
+  -v $(pwd)/proxy/favicon.ico:/usr/local/openresty/nginx/html/favicon.ico:ro \
+  -v $(pwd)/proxy/lua:/etc/openresty/lua:ro \
+  --rm \
+  "$CONTAINER_OPENRESTY"

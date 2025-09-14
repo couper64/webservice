@@ -41,22 +41,34 @@ fi
 
 # --- Build Docker images ---
 echo "🐳 Building Docker images..."
-if [ -f Dockerfile.fastapi ]; then
+if [ -f api/Dockerfile.fastapi ]; then
+    cd api
     docker build -t "$CONTAINER_FASTAPI" -f Dockerfile.fastapi . || error_exit "Failed to build "$CONTAINER_FASTAPI" image."
 else
     error_exit "Dockerfile.fastapi not found."
 fi
 
-if [ -f Dockerfile.celery ]; then
+if [ -f ../worker/Dockerfile.celery ]; then
+    cd ../worker
     docker build -t "$CONTAINER_CELERY" -f Dockerfile.celery . || error_exit "Failed to build "$CONTAINER_CELERY" image."
 else
     error_exit "Dockerfile.celery not found."
 fi
 
-if [ -f Dockerfile.streamlit ]; then
+if [ -f ../webui/Dockerfile.streamlit ]; then
+    cd ../webui
     docker build -t "$CONTAINER_STREAMLIT" -f Dockerfile.streamlit . || error_exit "Failed to build "$CONTAINER_STREAMLIT" image."
 else
     error_exit "Dockerfile.streamlit not found."
+fi
+
+
+if [ -f ../proxy/Dockerfile.openresty ]; then
+    cd ../proxy
+    docker build -t "$CONTAINER_OPENRESTY" -f Dockerfile.openresty . || error_exit "Failed to build "$CONTAINER_OPENRESTY" image."
+    cd ..
+else
+    error_exit "Dockerfile.openresty not found."
 fi
 
 echo "✅ All preparation tasks completed successfully!"
